@@ -44,6 +44,8 @@
 {{--    $controller = new App\Http\Controllers\Controller;--}}
 
 {{--    ?>--}}
+{{--<button type="button" class="btn btn-success" onclick="window.print()">طباعة</button>--}}
+
 <form action="{{ route('emploi.show', $classe->id) }}" >
     @csrf
 
