@@ -19,35 +19,62 @@ class BulletinController extends Controller
     {
         $semester = Trimester::find($semestre_id);
         if ($semester && $semester->status == 1) {
-        $moduleid=Matier::get('module_id');
+            $moduleid = Matier::pluck('module_id');
 
-        $module=Module::whereIn('id',$moduleid)->get();
+            $module = Module::whereIn('id', $moduleid)->get();
 
-        $etudiantId = Etudiant::find($id);
-        $matiers = Matier::get();
-        //$types = Typenote::all();
-        $classes = Classe::all();
-        $classEtudiant=Classe::where('id',$etudiantId->class_id)->get()->first();
-        $information=Ecole::all();
-        $notes = DB::table('etudiant_notes')->where('etudiant_id', $id)->where('semester_id',$semestre_id)->get();
+            $etudiantId = Etudiant::find($id);
+            $matiers = Matier::get();
+            $classes = Classe::all();
+            $classEtudiant = Classe::where('id', $etudiantId->class_id)->first();
+            $information = Ecole::all();
+            $notes = DB::table('etudiant_notes')
+                ->where('etudiant_id', $id)
+                ->where('semester_id', $semestre_id)
+                ->get();
+
+            $totalWeightedScore = 0;
+            $totalSubjects = count($notes);
+
+            // Initialize an array to store the maximum note for each subject
+            $maxNotes = [];
+
+            foreach ($matiers as $matier) {
+                $matierMaxNote = DB::table('etudiant_notes')
+                    ->where('semester_id', $semester->id)
+                    ->where('class_id', $etudiantId->class_id)
+                    ->where('matier_id', $matier->id)
+                    ->max('note');
 
 
-        $totalWeightedScore = 0;
-        $totalSubjects = count($notes);
+                $maxNotes[$matier->id] = $matierMaxNote;
+            }
+            foreach ($matiers as $matier) {
+                $matierMinNote = DB::table('etudiant_notes')
+                    ->where('semester_id', $semester->id)
+                    ->where('class_id', $etudiantId->class_id)
+                    ->where('matier_id', $matier->id)
+                    ->min('note');
 
-        foreach ($notes as $note) {
-            $matier = Matier::find($note->matier_id);
-            $totalWeightedScore += $note->note * $matier->coef;
-        }
 
-        $averageNote = $totalSubjects > 0 ? $totalWeightedScore / $totalSubjects : 0;
+                $minNotes[$matier->id] = $matierMinNote;
+            }
 
-        return view('bulletin', compact('classEtudiant','information','notes', 'etudiantId', 'matiers',  'classes', 'averageNote','module','semestre_id'));
-        //return view('bulletin',compact('module','matier','notes', 'etudiantId',  'classes', 'averageNote'));
+            foreach ($notes as $note) {
+                $matier = Matier::find($note->matier_id);
+                $totalWeightedScore += $note->note * $matier->coef;
+            }
+
+            $averageNote = $totalSubjects > 0 ? $totalWeightedScore / $totalSubjects : 0;
+            $maxmoyenne=DB::table('moyennes')->where('semestre_id',$semester->id)->where('classe_id',$etudiantId->class_id)->max('moyenne');
+
+            return view('bulletin', compact('classEtudiant', 'information', 'notes', 'etudiantId', 'matiers', 'classes', 'averageNote', 'module', 'semestre_id', 'maxNotes','maxmoyenne','minNotes'));
         } else {
             return 'no_bulletin_available';
         }
-        }
+    }
+
+
 
     public function table()
     {

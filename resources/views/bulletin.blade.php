@@ -23,9 +23,11 @@
             border-top-right-radius: 20%;
             background-color: #8da4ef;
         }
+
         .rtl p {
             text-align: right;
         }
+
         .head {
             text-align: center;
             margin-left: auto;
@@ -48,10 +50,10 @@
 
         .certificate {
             position: absolute;
-            top: 140%;
-            left: 20%;
+            top: 180%;
+            left: 10%;
             border-top-right-radius: 20%;
-            background-color: rgba(115,129,143,0.48);
+            background-color: rgba(115, 129, 143, 0.48);
             height: 10%;
             width: 10%;
             text-align: center;
@@ -74,14 +76,17 @@
 @php
     $sumModuleAverage = 0;
     $totalModules = 0;
+    $highestAverage = 0;
+    $lowestAverage = PHP_INT_MAX;
 @endphp
 
-<div style="height: 150px;margin-bottom: 20px" class="rtl">
+<div style="height: 150px; margin-bottom: 20px" class="rtl">
     <p>{{ $etudiantId->nom }} {{ $etudiantId->prenom }}: اسم التلميذ(ة)</p>
     <p>{{ $classEtudiant->title }}: قسم</p>
     <p>{{ $semestre_id }}: ثلاثي </p>
     <img style="width: 200px; margin-top: -10%; border-style: none;" src="https://png.pngtree.com/png-clipart/20211009/original/pngtree-school-logo-design-png-image_6845305.png">
 </div>
+
 <div style="display: flex; direction: rtl;">
     <div style="display: flex; justify-content: flex-start; flex-direction: column; width: 50%; direction: rtl;">
         <input name="etudiant_id" id="etudiant_id" type="text" hidden value="{{ $etudiantId->id }}">
@@ -102,6 +107,8 @@
                         @php
                             $sumNotes = 0;
                             $matiereCount = 0;
+                            $moduleHighestNote = 0;
+                            $moduleLowestNote = PHP_INT_MAX;
                         @endphp
                         @foreach($matiers as $key)
                             @if($m->id == $key->module_id)
@@ -115,13 +122,13 @@
                                     @foreach ($notesForSubject as $note)
                                         <td>{{ $note->note }}</td>
                                         @php
-                                            $sumNotes += $note->note * $key->coef; // Somme des notes pondérées
+                                            $sumNotes += $note->note * $key->coef; // Sum of weighted notes
                                             $matiereCount++;
                                         @endphp
                                     @endforeach
                                     <td></td>
-                                    <td>{{ $maxNote }}</td>
-                                    <td>{{ $minNote }}</td>
+                                    <td>{{ $maxNotes[$key->id] }}</td>
+                                    <td>{{ $minNotes[$key->id]  }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -133,8 +140,11 @@
                         </tr>
                     </table>
                     @php
-                        $sumModuleAverage += $matiereCount > 0 ? $sumNotes / $matiereCount : 0;
+                        $moduleAverage = $matiereCount > 0 ? $sumNotes / $matiereCount : 0;
+                        $sumModuleAverage += $moduleAverage;
                         $totalModules++;
+                        $highestAverage = max($highestAverage, $moduleAverage);
+                        $lowestAverage = min($lowestAverage, $moduleAverage);
                     @endphp
                 @endforeach
                 @php
@@ -161,8 +171,8 @@
         </tr>
         <tr>
             <td>{{ $averageGeneral }}</td>
-            <td>{{ $averageGeneral }}</td>
-            <td>{{ $averageGeneral }}</td>
+            <td>{{ $maxmoyenne  }}</td>
+            <td>{{ $lowestAverage }}</td>
         </tr>
     </table>
 </div>

@@ -1,6 +1,88 @@
 <!DOCTYPE html>
 <html>
+<style>
+    .top-text-block {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: 400;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: inherit !important;
+        border-bottom: 1px solid #f4f4f4;
+        position: relative;
+    &:hover {
+    &:before {
+         content: "";
+         width: 4px;
+         background: #f05a1a;
+         left: 0;
+         top: 0;
+         bottom: 0;
+         position: absolute;
+     }
+    }
+    &.unread {
+         background: #ffc;
 
+    // &:hover {
+        //   background:#ffd;
+        // }
+    }
+
+    .top-text-light {
+    // color:#ccc;
+        color: #999;
+        font-size: 0.8em;
+    }
+    }
+
+    .top-head-dropdown {
+    .dropdown-menu {
+        width: 350px;
+        height: 300px;
+        overflow: auto;
+    }
+
+    li:last-child {
+    .top-text-block {
+        border-bottom: 0;
+    }
+    }
+    }
+    .topbar-align-center {
+        text-align: center;
+    }
+    .loader-topbar {
+        margin: 5px auto;
+        border: 3px solid #ddd;
+        border-radius: 50%;
+        border-top: 3px solid #666;
+        width: 22px;
+        height: 22px;
+        -webkit-animation: spin-topbar 1s linear infinite;
+        animation: spin-topbar 1s linear infinite;
+    }
+
+    @-webkit-keyframes spin-topbar {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin-topbar {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -29,6 +111,7 @@
     <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
         <span class="navbar-toggler-icon"></span>
     </button>
+
     <a class="navbar-brand" href="#">
         <span class="navbar-brand-full">Parent</span>
         <span class="navbar-brand-minimized">{{ trans('panel.site_title') }}</span>
@@ -53,6 +136,80 @@
 
 
     </ul>
+    <?php
+    $notifications=\Illuminate\Support\Facades\DB::table('notifications')->get();
+    ?>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <!-- Single button -->
+            <div class="btn-group pull-right top-head-dropdown">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Notification <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    @foreach($notifications as $notification)
+                    <li>
+                        <a href="#" class="top-text-block">
+                            <div class="top-text-heading">{{$notification->data}}</div>
+                            <div class="top-text-light">{{$notification->created_at}}</div>
+                        </a>
+                    </li>
+                    @endforeach
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">New asset recommendations in <b>Gaming Laptop</b></div>--}}
+{{--                            <div class="top-text-light">2 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">New asset recommendations in <b>5 themes</b></div>--}}
+{{--                            <div class="top-text-light">4 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">Assets specifications modified in themes</div>--}}
+{{--                            <div class="top-text-light">4 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">We crawled <b>www.dell.com</b> successfully</div>--}}
+{{--                            <div class="top-text-light">5 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">Next crawl scheduled on <b>10 Oct 2016</b></div>--}}
+{{--                            <div class="top-text-light">6 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">You have an update for <b>www.dell.com</b></div>--}}
+{{--                            <div class="top-text-light">7 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading"><b>"Gaming Laptop"</b> is now trending</div>--}}
+{{--                            <div class="top-text-light">7 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <a href="#" class="top-text-block">--}}
+{{--                            <div class="top-text-heading">New asset recommendations in <b>Gaming Laptop</b></div>--}}
+{{--                            <div class="top-text-light">7 hours ago</div>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li>--}}
+{{--                        <div class="loader-topbar"></div>--}}
+{{--                    </li>--}}
+                </ul>
+            </div>
+        </div>
+    </div>
 </header>
 
 <div class="app-body">
